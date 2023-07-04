@@ -1,85 +1,67 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
+import { DefaultTheme } from "./configurations/DefaultTheme";
 import {
-  Text,
-  Link,
-  HStack,
-  Center,
-  Heading,
-  Switch,
-  useColorMode,
   NativeBaseProvider,
-  extendTheme,
-  VStack,
-  Box,
+  Text
 } from "native-base";
-import NativeBaseIcon from "./components/NativeBaseIcon";
-import { Platform } from "react-native";
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'react-native';
+import { useFonts } from 'expo-font';
+import { AuthProvider } from './context/AuthProvider';
 
-// Define the config
-const config = {
-  useSystemColorMode: false,
-  initialColorMode: "dark",
-};
-
-// extend the theme
-export const theme = extendTheme({ config });
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  return (
-    <NativeBaseProvider>
-      <Center
-        _dark={{ bg: "blueGray.900" }}
-        _light={{ bg: "blueGray.50" }}
-        px={4}
-        flex={1}
-      >
-        <VStack space={5} alignItems="center">
-          <NativeBaseIcon />
-          <Heading size="lg">Welcome to NativeBase</Heading>
-          <HStack space={2} alignItems="center">
-            <Text>Edit</Text>
-            <Box
-              _web={{
-                _text: {
-                  fontFamily: "monospace",
-                  fontSize: "sm",
-                },
-              }}
-              px={2}
-              py={1}
-              _dark={{ bg: "blueGray.800" }}
-              _light={{ bg: "blueGray.200" }}
-            >
-              App.js
-            </Box>
-            <Text>and save to reload.</Text>
-          </HStack>
-          <Link href="https://docs.nativebase.io" isExternal>
-            <Text color="primary.500" underline fontSize={"xl"}>
-              Learn NativeBase
-            </Text>
-          </Link>
-          <ToggleDarkMode />
-        </VStack>
-      </Center>
-    </NativeBaseProvider>
-  );
-}
 
-// Color Switch Component
-function ToggleDarkMode() {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const [splashScreen, setSplashScreen] = useState(true);
+
+  let [fontsLoaded] = useFonts({
+    'Poppins-Black': require('./assets/Poppins/Poppins-Black.ttf'),
+    'Poppins-BlackItalic': require('./assets/Poppins/Poppins-BlackItalic.ttf'),
+    'Poppins-Bold': require('./assets/Poppins/Poppins-Bold.ttf'),
+    'Poppins-BoldItalic': require('./assets/Poppins/Poppins-BoldItalic.ttf'),
+    'Poppins-ExtraBold': require('./assets/Poppins/Poppins-ExtraBold.ttf'),
+    'Poppins-ExtraBoldItalic': require('./assets/Poppins/Poppins-ExtraBoldItalic.ttf'),
+    'Poppins-ExtraLight': require('./assets/Poppins/Poppins-ExtraLight.ttf'),
+    'Poppins-ExtraLightItalic': require('./assets/Poppins/Poppins-ExtraLightItalic.ttf'),
+    'Poppins-Light': require('./assets/Poppins/Poppins-Light.ttf'),
+    'Poppins-LightItalic': require('./assets/Poppins/Poppins-LightItalic.ttf'),
+    'Poppins-Medium': require('./assets/Poppins/Poppins-Medium.ttf'),
+    'Poppins-MediumItalic': require('./assets/Poppins/Poppins-MediumItalic.ttf'),
+    'Poppins-Regular': require('./assets/Poppins/Poppins-Regular.ttf'),
+    'Poppins-Italic': require('./assets/Poppins/Poppins-Italic.ttf'),
+    'Poppins-SemiBold': require('./assets/Poppins/Poppins-SemiBold.ttf'),
+    'Poppins-SemiBoldItalic': require('./assets/Poppins/Poppins-SemiBoldItalic.ttf'),
+    'Poppins-Thin': require('./assets/Poppins/Poppins-Thin.ttf'),
+    'Poppins-ThinItalic': require('./assets/Poppins/Poppins-ThinItalic.ttf'),
+  });
+
+
+  const closeSplashScreen = async () => {
+    await SplashScreen.hideAsync();
+  }
+
+  useEffect(() => {
+    if (fontsLoaded == true) {
+      setSplashScreen(false);
+      closeSplashScreen();
+    }
+  }, [fontsLoaded, splashScreen]);
+
+  if (!fontsLoaded) {
+    return (<></>)
+  }
+
   return (
-    <HStack space={2} alignItems="center">
-      <Text>Dark</Text>
-      <Switch
-        isChecked={colorMode === "light"}
-        onToggle={toggleColorMode}
-        aria-label={
-          colorMode === "light" ? "switch to dark mode" : "switch to light mode"
-        }
+    <NativeBaseProvider theme={DefaultTheme}>
+      <StatusBar
+        animated={true}
+        backgroundColor={"#ECEDFD"}
+        barStyle="dark-content"
       />
-      <Text>Light</Text>
-    </HStack>
+      <AuthProvider>    
+        <Text>Welcome to USIU Chat Bot</Text>             
+      </AuthProvider>
+    </NativeBaseProvider>
   );
 }

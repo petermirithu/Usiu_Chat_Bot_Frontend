@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Usiu_Chat_Bot_Frontend",
+    "name": "Usiu Chat Bot",
     "slug": "Usiu_Chat_Bot_Frontend",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,14 +10,18 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "updates": {
-      "fallbackToCacheTimeout": 0
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     },
+    "updates": {
+      "fallbackToCacheTimeout": 6000,
+      "url": "https://u.expo.dev/99c53387-752a-4c30-a92c-e62030ec080d"
+    },    
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
