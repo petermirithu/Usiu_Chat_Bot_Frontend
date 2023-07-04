@@ -1,6 +1,9 @@
 {
   "name": "usiu_chat_bot_frontend",
   "version": "1.0.0",
+  "homepage": ".",
+  "author": "Peter Mirithu",
+  "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "keywords": [
     "react",
@@ -30,11 +33,5 @@
   },
   "devDependencies": {
     "@babel/core": "^7.19.3"
-  },
-  "bugs": {
-    "url": "https://github.com/GeekyAnts/nativebase-templates/issues"
-  },
-  "homepage": "https://github.com/GeekyAnts/nativebase-templates#readme",
-  "author": "Aditya Jamuar",
-  "private": true
+  }  
 }
