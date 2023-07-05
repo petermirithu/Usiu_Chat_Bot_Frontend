@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
     View,
-    Text,
-    useTheme,
+    Text,    
     Box,
     Image,
     Button,    
@@ -11,9 +10,7 @@ import { Global } from "../../styles/Global";
 import Loader from "../../components/Loader";
 import { useAssets } from 'expo-asset';
 
-export default function Welcome({ navigation }) {
-    const { colors } = useTheme();
-
+export default function Welcome({ navigation }) {    
     const [assets] = useAssets([require('../../assets/icon.png'), require('../../assets/Images/USIU_Africa_Logo.png')])
 
 
@@ -22,7 +19,7 @@ export default function Welcome({ navigation }) {
 
     if (!assets) {
         return (
-            <View position={"absolute"} zIndex={999} top={0} bottom={0} left={0} right={0} alignItems="center" justifyContent="center" flex="1" backgroundColor={colors['lavenderWeb']}>
+            <View alignItems="center" justifyContent="center" flex="1">
                 <Loader></Loader>
             </View>
         )
@@ -40,7 +37,7 @@ export default function Welcome({ navigation }) {
                 </View>
                 <Button mt={10} width={"100%"} onPress={() => navigation.navigate("Sign In")}>Get Started</Button>
             </View>
-            <Image mb={3} alignSelf={"center"} source={assets[1]} alt="USIU logo" width={100} height={70} />
+            <Image mb={3} alignSelf={"center"} source={assets[1]} alt="USIU logo" width={70} height={50} />
         </Box>
     )
 }

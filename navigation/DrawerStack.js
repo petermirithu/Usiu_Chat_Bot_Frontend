@@ -6,6 +6,8 @@ import DrawerContent from './DrawerContent';
 import { useSelector } from 'react-redux';
 import Welcome from '../screens/auth/Welcome';
 import ErrorPage from '../screens/other/ErrorPage';
+import SignIn from '../screens/auth/SignIn';
+import SignUp from '../screens/auth/SignUp';
 
 export default function DrawerDrawer() {
     const { isAuthenticated } = useSelector((state) => state.userProfile);
@@ -40,6 +42,8 @@ export default function DrawerDrawer() {
                                 headerShown: false
                             }}>
                                 <Stack.Screen name="Welcome" component={Welcome} />                                
+                                <Stack.Screen name="Sign In" component={SignIn} />
+                                <Stack.Screen name="Sign Up" component={SignUp} />
                             </Stack.Group>
                         }                        
                     </>
