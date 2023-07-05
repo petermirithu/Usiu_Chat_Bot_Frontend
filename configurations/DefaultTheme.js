@@ -1,17 +1,41 @@
 import { extendTheme } from "native-base";
 
 export const DefaultTheme = extendTheme({
-  colors: {        
+  colors: {
+    primary: {
+      50: '#e8ecff',
+      100: '#bec7f6',
+      200: '#93a2eb',
+      300: '#6a7ce2',
+      400: '#4057d8',
+      500: '#283ebf',
+      600: '#1d3095',
+      700: '#14226c',
+      800: '#0a1543',
+      900: '#01071b',
+    },
+    secondary: {
+      50: '#ecefff',
+      100: '#ccd0e9',
+      200: '#abb1d5',
+      300: '#8992c2',
+      400: '#6972b0',
+      500: '#4f5996',
+      600: '#3d4576',
+      700: '#2a3155',
+      800: '#191e35',
+      900: '#070918',
+    }
   },
   components: {
     Button: {
-      defaultProps: {  
-        rounded: "full",           
-      },     
-    },
-    Input:{
       defaultProps: {
-        bg:"#fff"
+        rounded: "full",
+      },
+    },
+    Input: {
+      defaultProps: {
+        bg: "#fff"
       }
     }
   },

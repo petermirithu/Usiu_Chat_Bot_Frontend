@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { DefaultTheme } from "./configurations/DefaultTheme";
 import {
-  NativeBaseProvider,
-  Text
+  NativeBaseProvider  
 } from "native-base";
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AuthProvider } from './context/AuthProvider';
+import ReduxStore from "./redux/Store";
+import { Provider } from 'react-redux';
+import DrawerStack from './navigation/DrawerStack';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -53,15 +55,17 @@ export default function App() {
   }
 
   return (
-    <NativeBaseProvider theme={DefaultTheme}>
-      <StatusBar
-        animated={true}
-        backgroundColor={"#ECEDFD"}
-        barStyle="dark-content"
-      />
-      <AuthProvider>    
-        <Text>Welcome to USIU Chat Bot</Text>             
-      </AuthProvider>
-    </NativeBaseProvider>
+    <Provider store={ReduxStore}>
+      <NativeBaseProvider theme={DefaultTheme}>
+        <StatusBar
+          animated={true}
+          backgroundColor={"#ECEDFD"}
+          barStyle="dark-content"
+        />
+        <AuthProvider>
+          <DrawerStack></DrawerStack>
+        </AuthProvider>
+      </NativeBaseProvider>
+    </Provider>
   );
 }

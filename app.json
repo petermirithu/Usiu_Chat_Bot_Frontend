@@ -9,13 +9,6 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 6000,
-      "url": "https://u.expo.dev/99c53387-752a-4c30-a92c-e62030ec080d"
     },    
     "assetBundlePatterns": [
       "**/*"
@@ -31,6 +24,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    }    
   }
 }
