@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -21,20 +21,18 @@ import Loader from "../../components/Loader";
 import { Keyboard } from "react-native";
 import { useAssets } from 'expo-asset';
 
-export default function SignIn({ navigation }) {
+export default function ForgotPassword({ navigation }) {
     const { colors } = useTheme();    
 
-    const [assets] = useAssets([require('../../assets/icon.png')])
+    const [assets] = useAssets([require('../../assets/icon.png')])    
 
     const [formData, setFormData] = useState(
         {
             email: { value: "", invalid: false },
-            password: { value: "", invalid: false },
         }
-    );
-    const [showPassword, setShowPassword] = useState(false);
+    );    
     const [submitting, setSubmitting] = useState(false);
-    
+
 
     const updateForm = (field, value) => {
         let tempForm = { ...formData };
@@ -45,29 +43,25 @@ export default function SignIn({ navigation }) {
         setFormData(tempForm);
     }
 
-    const submitData = async () => {                
-        let tempForm = { ...formData };        
+    const submitData = () => {
+        let tempForm = { ...formData };
+
         if (validateEmail(formData.email.value) == false) {
             tempForm.email.invalid = true;
-            setFormData(tempForm);            
-        }
-        else if (formData.password.value?.length < 8) {
-            tempForm.password.invalid = true;
-            tempForm.password.value = "";
-            tempForm.password.error = "Please enter a valid Password. It must have at least 8 characters.";
-            setFormData(tempForm);            
+            setFormData(tempForm);
         }
         else {
             setSubmitting(true);
             setTimeout(() => {
-                setSubmitting(false);                                
+                setSubmitting(false);                
+                navigation.navigate("Reset Password");
             }, 2000);
         }
         Keyboard.dismiss();
     }
-    
+
     useEffect(() => {
-    }, [formData, showPassword, submitting])
+    }, [formData, submitting])
 
     if (!assets) {
         return (
@@ -84,12 +78,11 @@ export default function SignIn({ navigation }) {
         }}>
             <Box safeArea safeAreaBottom={0} style={Global.container}>                
                 <HStack justifyContent={"space-between"} alignItems={"center"} pt={5} px={15}>
-                    <IconButton onPress={() => navigation.navigate("Welcome")} borderRadius={100} width={35} height={35} variant="outline" _icon={{
+                    <IconButton onPress={() => navigation.navigate("Sign In")} borderRadius={100} width={35} height={35} variant="outline" _icon={{
                         as: MaterialIcons,
                         name: "arrow-back",
                         size: "lg"
                     }} />
-                    <Button variant="outline" onPress={() => navigation.navigate('Sign Up')}>Sign Up</Button>
                 </HStack>
 
                 <Image alignSelf={"center"} source={assets[0]} alt="App logo" width={150} height={150} />
@@ -97,8 +90,8 @@ export default function SignIn({ navigation }) {
                 <View padding={5} mt="5" pt={10} flex={1}>
                     <ScrollView keyboardShouldPersistTaps="handled">
                         <View mt="5">
-                            <Text style={Global.title}>Welcome <Text color={"yellow.500"}>Back</Text>!</Text>
-                            <Text color={"coolGray.500"}>Sign in to continue!</Text>
+                            <Text style={Global.title}>Forgot <Text color={"yellow.500"}>Password</Text></Text>
+                            <Text color={"coolGray.500"}>Enter the email address associated with your account and we will send you a verification code.</Text>
                         </View>
 
                         <VStack space={3} mt="5">
@@ -119,30 +112,6 @@ export default function SignIn({ navigation }) {
                                 <FormControl.ErrorMessage mt="2" leftIcon={<FontAwesome5 name="exclamation-circle" size={10} color={colors["danger"][500]} />}>
                                     Please provide a valid email!
                                 </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl isInvalid={formData.password.invalid} isRequired={formData.password.invalid} w="100%">
-                                <FormControl.Label>Password</FormControl.Label>
-                                <Input
-                                    keyboardType="default"
-                                    nativeID="password" variant={"rounded"}
-                                    placeholder={"Password must have at least 8 characters"}
-                                    value={formData.password.value}
-                                    type={showPassword ? "text" : "password"}
-                                    onChangeText={(password) => updateForm("password", password)}
-                                    InputRightElement={
-                                        <IconButton borderRadius={100} variant="ghost" onPress={() => setShowPassword(!showPassword)} _icon={{
-                                            as: MaterialIcons,
-                                            name: (showPassword == true) ? "visibility" : "visibility-off",
-                                            size: "lg"
-                                        }} />
-                                    }
-                                />
-                                <FormControl.ErrorMessage mt="2" leftIcon={<FontAwesome5 name="exclamation-circle" size={7} color={colors["danger"][500]} />}>
-                                    Please provide a valid password!
-                                </FormControl.ErrorMessage>
-                                <Button mt={3} variant={"link"} alignSelf={"flex-end"}
-                                    onPress={() => navigation.navigate("Forgot Password")}
-                                >Forgot Password?</Button>
                             </FormControl>
                             <Button mt="5" onPress={() => submitData()} isLoading={submitting} isLoadingText="Submitting...">Submit</Button>
                         </VStack>

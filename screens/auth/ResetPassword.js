@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -11,30 +11,32 @@ import {
     VStack,
     Input,
     Image,
-    KeyboardAvoidingView,
-    ScrollView
+    ScrollView,
+    KeyboardAvoidingView
 } from "native-base";
 import { Global } from "../../styles/Global";
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { validateEmail } from "../../services/UserService";
 import Loader from "../../components/Loader";
+import { useDispatch } from "react-redux";
+import { setNotificationModal } from "../../redux/NotificationSlice";
 import { Keyboard } from "react-native";
-import { useAssets } from 'expo-asset';
+import { useAssets } from "expo-asset";
 
-export default function SignIn({ navigation }) {
-    const { colors } = useTheme();    
+export default function ResetPassword({ navigation }) {
+    const { colors } = useTheme();
+    const dispatch = useDispatch();
 
     const [assets] = useAssets([require('../../assets/icon.png')])
 
     const [formData, setFormData] = useState(
         {
-            email: { value: "", invalid: false },
-            password: { value: "", invalid: false },
+            verificationCode: { value: "", invalid: false, error: "" },
+            password: { value: "", invalid: false, error: "" },
+            confirmPassword: { value: "", invalid: false, error: "" },
         }
     );
     const [showPassword, setShowPassword] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    
 
     const updateForm = (field, value) => {
         let tempForm = { ...formData };
@@ -45,27 +47,39 @@ export default function SignIn({ navigation }) {
         setFormData(tempForm);
     }
 
-    const submitData = async () => {                
-        let tempForm = { ...formData };        
-        if (validateEmail(formData.email.value) == false) {
-            tempForm.email.invalid = true;
-            setFormData(tempForm);            
+    const submitData = () => {
+        let tempForm = { ...formData };
+        if (formData.verificationCode.value?.length != 6) {
+            tempForm.verificationCode.invalid = true;
+            tempForm.verificationCode.error = "Wrong verification code!";
+            setFormData(tempForm);
         }
         else if (formData.password.value?.length < 8) {
             tempForm.password.invalid = true;
             tempForm.password.value = "";
             tempForm.password.error = "Please enter a valid Password. It must have at least 8 characters.";
-            setFormData(tempForm);            
+            setFormData(tempForm);
+        }
+        else if (formData.password.value !== formData.confirmPassword.value) {
+            tempForm.confirmPassword.invalid = true;
+            setFormData(tempForm);
         }
         else {
             setSubmitting(true);
             setTimeout(() => {
-                setSubmitting(false);                                
+                setSubmitting(false);
+                dispatch(setNotificationModal({
+                    show: true,
+                    title: "Password reset Successfully",
+                    description: "Now, sign in using your new password.",
+                    status: "passwordChanged",
+                }));
+                navigation.navigate("Sign In");
             }, 2000);
         }
         Keyboard.dismiss();
     }
-    
+
     useEffect(() => {
     }, [formData, showPassword, submitting])
 
@@ -82,34 +96,35 @@ export default function SignIn({ navigation }) {
             base: "100%",
             lg: "auto"
         }}>
-            <Box safeArea safeAreaBottom={0} style={Global.container}>                
+            <Box safeArea safeAreaBottom={0} style={Global.container}>
                 <HStack justifyContent={"space-between"} alignItems={"center"} pt={5} px={15}>
-                    <IconButton onPress={() => navigation.navigate("Welcome")} borderRadius={100} width={35} height={35} variant="outline" _icon={{
+                    <IconButton onPress={() => navigation.navigate("Forgot Password")} borderRadius={100} width={35} height={35} variant="outline" _icon={{
                         as: MaterialIcons,
                         name: "arrow-back",
                         size: "lg"
                     }} />
-                    <Button variant="outline" onPress={() => navigation.navigate('Sign Up')}>Sign Up</Button>
                 </HStack>
 
                 <Image alignSelf={"center"} source={assets[0]} alt="App logo" width={150} height={150} />
 
-                <View padding={5} mt="5" pt={10} flex={1}>
+                <View padding={5} mt="0" pt={0} flex={1}>
                     <ScrollView keyboardShouldPersistTaps="handled">
                         <View mt="5">
-                            <Text style={Global.title}>Welcome <Text color={"yellow.500"}>Back</Text>!</Text>
-                            <Text color={"coolGray.500"}>Sign in to continue!</Text>
+                            <Text style={Global.title}>
+                                Reset <Text color={"yellow.500"}>Password</Text>
+                            </Text>
+                            <Text color={"coolGray.500"}>Your new password must be different from the old password.</Text>
                         </View>
 
                         <VStack space={3} mt="5">
-                            <FormControl isInvalid={formData.email.invalid} isRequired={formData.email.invalid} w="100%">
-                                <FormControl.Label>Email</FormControl.Label>
+                            <FormControl isInvalid={formData.verificationCode.invalid} isRequired={formData.verificationCode.invalid} w="100%">
+                                <FormControl.Label>Verification Code</FormControl.Label>
                                 <Input
-                                    keyboardType="email-address"
-                                    nativeID="email" variant={"rounded"}
-                                    placeholder={"Enter your email"}
-                                    value={formData.email.value}
-                                    onChangeText={(email) => updateForm("email", email)}
+                                    keyboardType="numeric"
+                                    nativeID="verificationCode" variant={"rounded"}
+                                    placeholder={"Check your email for the verification code"}
+                                    value={formData.verificationCode.value}
+                                    onChangeText={(verificationCode) => updateForm("verificationCode", verificationCode)}
                                     InputRightElement={
                                         <IconButton variant="unstyled" _icon={{
                                             size: "lg"
@@ -117,15 +132,15 @@ export default function SignIn({ navigation }) {
                                     }
                                 />
                                 <FormControl.ErrorMessage mt="2" leftIcon={<FontAwesome5 name="exclamation-circle" size={10} color={colors["danger"][500]} />}>
-                                    Please provide a valid email!
+                                    {formData.verificationCode.error}
                                 </FormControl.ErrorMessage>
                             </FormControl>
                             <FormControl isInvalid={formData.password.invalid} isRequired={formData.password.invalid} w="100%">
-                                <FormControl.Label>Password</FormControl.Label>
+                                <FormControl.Label>New Password</FormControl.Label>
                                 <Input
                                     keyboardType="default"
                                     nativeID="password" variant={"rounded"}
-                                    placeholder={"Password must have at least 8 characters"}
+                                    placeholder={"Must have at least 8 characters"}
                                     value={formData.password.value}
                                     type={showPassword ? "text" : "password"}
                                     onChangeText={(password) => updateForm("password", password)}
@@ -138,11 +153,27 @@ export default function SignIn({ navigation }) {
                                     }
                                 />
                                 <FormControl.ErrorMessage mt="2" leftIcon={<FontAwesome5 name="exclamation-circle" size={7} color={colors["danger"][500]} />}>
-                                    Please provide a valid password!
+                                    {formData.password.error}
                                 </FormControl.ErrorMessage>
-                                <Button mt={3} variant={"link"} alignSelf={"flex-end"}
-                                    onPress={() => navigation.navigate("Forgot Password")}
-                                >Forgot Password?</Button>
+                            </FormControl>
+                            <FormControl isInvalid={formData.confirmPassword.invalid} isRequired={formData.confirmPassword.invalid} w="100%">
+                                <FormControl.Label>Confirm Password</FormControl.Label>
+                                <Input
+                                    keyboardType="default"
+                                    nativeID="confirmPassword" variant={"rounded"}
+                                    placeholder={"Must match the new password above"}
+                                    value={formData.confirmPassword.value}
+                                    type={showPassword ? "text" : "password"}
+                                    onChangeText={(confirmPassword) => updateForm("confirmPassword", confirmPassword)}
+                                    InputRightElement={
+                                        <IconButton variant="unstyled" _icon={{
+                                            size: "lg"
+                                        }} />
+                                    }
+                                />
+                                <FormControl.ErrorMessage mt="2" leftIcon={<FontAwesome5 name="exclamation-circle" size={7} color={colors["danger"][500]} />}>
+                                    This password does not match the password above!
+                                </FormControl.ErrorMessage>
                             </FormControl>
                             <Button mt="5" onPress={() => submitData()} isLoading={submitting} isLoadingText="Submitting...">Submit</Button>
                         </VStack>

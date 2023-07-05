@@ -69,7 +69,7 @@ export default function SignUp({ navigation }) {
         else if (formData.password.value?.length < 8) {
             tempForm.password.invalid = true;
             tempForm.password.value = "";
-            tempForm.password.error = "Must include one special character, one lowercase letter, and one capital letter.";
+            tempForm.password.error = "Please enter a valid Password. It must have at least 8 characters.";
             setFormData(tempForm);
         }
         else if (formData.password.value != formData.confirmPassword.value) {
@@ -79,6 +79,7 @@ export default function SignUp({ navigation }) {
         else {
             setSubmitting(true);
             setTimeout(() => {
+                navigation.navigate("Email Verification", { Destination: formData.email.value });
                 setSubmitting(false);
             }, 2000);
         }

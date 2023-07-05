@@ -1,19 +1,20 @@
 import React, { createContext, useState, useEffect } from "react";
 import Loader from "../components/Loader";
 import { View, useTheme } from "native-base";
+import NotificationModal from "../components/NotificationModal";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const { colors } = useTheme();    
-    const [isLoading, setIsLoading] = useState(null);    
+    const { colors } = useTheme();
+    const [isLoading, setIsLoading] = useState(null);
 
     const checkIfAuthenticated = async () => {
-       setTimeout(() => {
+        setTimeout(() => {
             setIsLoading(false);
-       }, 2000);
+        }, 2000);
     }
-    
+
     useEffect(() => {
         if (isLoading == null) {
             setIsLoading(true);
@@ -31,9 +32,10 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{
-            
+
         }}>
-            {children}               
+            {children}
+            <NotificationModal></NotificationModal>
         </AuthContext.Provider>
     )
 }

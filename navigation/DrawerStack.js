@@ -8,6 +8,9 @@ import Welcome from '../screens/auth/Welcome';
 import ErrorPage from '../screens/other/ErrorPage';
 import SignIn from '../screens/auth/SignIn';
 import SignUp from '../screens/auth/SignUp';
+import ForgotPassword from '../screens/auth/ForgotPassword';
+import ResetPassword from '../screens/auth/ResetPassword';
+import EmailVerification from '../screens/auth/EmailVerification';
 
 export default function DrawerDrawer() {
     const { isAuthenticated } = useSelector((state) => state.userProfile);
@@ -44,6 +47,9 @@ export default function DrawerDrawer() {
                                 <Stack.Screen name="Welcome" component={Welcome} />                                
                                 <Stack.Screen name="Sign In" component={SignIn} />
                                 <Stack.Screen name="Sign Up" component={SignUp} />
+                                <Stack.Screen name="Forgot Password" component={ForgotPassword} />
+                                <Stack.Screen name="Reset Password" component={ResetPassword} />
+                                <Stack.Screen name="Email Verification" component={EmailVerification} />
                             </Stack.Group>
                         }                        
                     </>
