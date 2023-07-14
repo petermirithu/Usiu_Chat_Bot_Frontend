@@ -4,7 +4,6 @@ import {
   NativeBaseProvider  
 } from "native-base";
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AuthProvider } from './context/AuthProvider';
 import ReduxStore from "./redux/Store";
@@ -56,12 +55,7 @@ export default function App() {
 
   return (
     <Provider store={ReduxStore}>
-      <NativeBaseProvider theme={DefaultTheme}>
-        <StatusBar
-          animated={true}
-          backgroundColor={"#ECEDFD"}
-          barStyle="dark-content"
-        />
+      <NativeBaseProvider theme={DefaultTheme}>        
         <AuthProvider>
           <DrawerStack></DrawerStack>
         </AuthProvider>

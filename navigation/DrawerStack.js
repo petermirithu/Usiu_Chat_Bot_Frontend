@@ -11,6 +11,8 @@ import SignUp from '../screens/auth/SignUp';
 import ForgotPassword from '../screens/auth/ForgotPassword';
 import ResetPassword from '../screens/auth/ResetPassword';
 import EmailVerification from '../screens/auth/EmailVerification';
+import ChatInterface from '../screens/app/ChatInterface';
+import Navbar from '../components/Navbar';
 
 export default function DrawerDrawer() {
     const { isAuthenticated } = useSelector((state) => state.userProfile);
@@ -30,7 +32,7 @@ export default function DrawerDrawer() {
                     </Stack.Group>
                     :
                     <>
-                        {(isAuthenticated == true) ?
+                        {(isAuthenticated != true) ?
                             <Stack.Group screenOptions={{
                                 headerLeftShown: false,
                                 header: () => {
@@ -38,20 +40,21 @@ export default function DrawerDrawer() {
                                         <Navbar {...navigation}></Navbar>
                                     )
                                 }
-                            }}>                                
+                            }}>
+                                <Stack.Screen name="Chat Interface" component={ChatInterface} />
                             </Stack.Group>
                             :
                             <Stack.Group screenOptions={{
                                 headerShown: false
                             }}>
-                                <Stack.Screen name="Welcome" component={Welcome} />                                
+                                <Stack.Screen name="Welcome" component={Welcome} />
                                 <Stack.Screen name="Sign In" component={SignIn} />
                                 <Stack.Screen name="Sign Up" component={SignUp} />
                                 <Stack.Screen name="Forgot Password" component={ForgotPassword} />
                                 <Stack.Screen name="Reset Password" component={ResetPassword} />
                                 <Stack.Screen name="Email Verification" component={EmailVerification} />
                             </Stack.Group>
-                        }                        
+                        }
                     </>
                 }
             </Stack.Navigator>
