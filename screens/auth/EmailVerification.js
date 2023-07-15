@@ -22,6 +22,9 @@ import { useDispatch } from "react-redux";
 import { Keyboard } from "react-native";
 import { setNotificationModal } from "../../redux/NotificationSlice";
 import { useAssets } from "expo-asset";
+import { resend_verification_code, verify_verification_code } from "../../services/UserService";
+import { setIsAuthenticated, setUserProfile } from "../../redux/UserProfileSlice";
+import { storeAuthToken } from "../../services/CacheService";
 
 export default function EmailVerification({ route, navigation }) {
     const { colors } = useTheme();
@@ -46,7 +49,7 @@ export default function EmailVerification({ route, navigation }) {
         setFormData(tempForm);
     }
 
-    const submitData = () => {
+    const submitData = async () => {
         let tempForm = { ...formData };
 
         if (tempForm.verificationCode.value?.length != 6) {
@@ -56,16 +59,23 @@ export default function EmailVerification({ route, navigation }) {
         }
         else {
             setSubmitting(true);
-            setTimeout(() => {
+            await verify_verification_code({userId:route?.params?.userId, code:formData.verificationCode.value}).then(result=>{                                              
+                storeAuthToken(result?.data?.auth_token);
+                delete result.data.auth_token;
+                dispatch(setUserProfile(result.data));
                 setSubmitting(false);
-            }, 2000);            
+                dispatch(setIsAuthenticated(true));
+            }).catch(error=>{                
+                setSubmitting(false);
+                alert(error?.response?.data);
+            });            
         }
         Keyboard.dismiss();
     }
 
-    const resendVerificationCode = () => {
+    const resendVerificationCode = async () => {
         setSubmitting(true);
-        setTimeout(() => {
+        await resend_verification_code({userId:route?.params?.userId}).then(response=>{
             setSubmitting(false);
             dispatch(setNotificationModal({
                 show: true,
@@ -73,7 +83,10 @@ export default function EmailVerification({ route, navigation }) {
                 description: "Please check your email for the code.",
                 status: "emailSent",
             })); 
-        }, 2000);       
+        }).catch(error=>{
+            setSubmitting(false);
+            alert(error?.response?.data);          
+        });        
     }    
 
     useEffect(() => {
@@ -103,7 +116,7 @@ export default function EmailVerification({ route, navigation }) {
 
                 <Image alignSelf={"center"} source={assets[0]} alt="App logo" width={150} height={150} />
 
-                <View padding={5} mt="5" pt={10} flex={1}>
+                <View backgroundColor={"gray[100]"} borderTopRadius={30} padding={5} mt="5" pt={10} flex={1}>
                     <ScrollView keyboardShouldPersistTaps="handled">
                         <View mt="5">
                             <Text style={Global.title}>Email <Text color={"yellow.500"}>Verification</Text></Text>

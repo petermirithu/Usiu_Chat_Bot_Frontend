@@ -13,12 +13,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { Platform, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from 'native-base';
+import { globalSignUserOut } from "../services/CacheService";
+import { setIsAuthenticated } from "../redux/UserProfileSlice";
 
 export default function Navbar(navigation) {
     const { colors } = useTheme();    
     const insets = useSafeAreaInsets();    
+    const dispatch = useDispatch();
 
     const { userProfile } = useSelector((state) => state.userProfile);    
+
+    const openProfile = async () => {
+        await globalSignUserOut();
+        dispatch(setIsAuthenticated(false));                                                                        
+    }
 
     useEffect(() => {
     }, [])
@@ -33,7 +41,8 @@ export default function Navbar(navigation) {
             <Box bg="primary.600">
                 <HStack pt={(Platform.OS == "ios") ? insets.top : 0} py="2" justifyContent="space-between" alignItems="center" w="100%">
                     <HStack alignItems="center">
-                        <IconButton                            
+                        <IconButton  
+                            onPress={()=> navigation.openDrawer()}                          
                             _icon={{
                                 as: MaterialIcons,
                                 name: "menu",
@@ -47,7 +56,7 @@ export default function Navbar(navigation) {
                     </HStack>
                     <HStack justifyContent={"center"} alignItems={"center"} marginRight={2} space={5}>                                                
                         <View>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=> openProfile()}>
                                 <Avatar bg="white" _text={{ color: "primary.600" }} size={"sm"} source={{
                                     uri: userProfile?.picture
                                 }}>

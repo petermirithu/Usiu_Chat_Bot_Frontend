@@ -87,7 +87,7 @@ export default function ForgotPassword({ navigation }) {
 
                 <Image alignSelf={"center"} source={assets[0]} alt="App logo" width={150} height={150} />
 
-                <View padding={5} mt="5" pt={10} flex={1}>
+                <View backgroundColor={"gray[100]"} borderTopRadius={30} padding={5} mt="5" pt={10} flex={1}>
                     <ScrollView keyboardShouldPersistTaps="handled">
                         <View mt="5">
                             <Text style={Global.title}>Forgot <Text color={"yellow.500"}>Password</Text></Text>

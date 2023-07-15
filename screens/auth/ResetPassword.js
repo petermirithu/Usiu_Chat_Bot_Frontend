@@ -107,7 +107,7 @@ export default function ResetPassword({ navigation }) {
 
                 <Image alignSelf={"center"} source={assets[0]} alt="App logo" width={150} height={150} />
 
-                <View padding={5} mt="0" pt={0} flex={1}>
+                <View backgroundColor={"gray[100]"} borderTopRadius={30} padding={5} mt="0" pt={0} flex={1}>
                     <ScrollView keyboardShouldPersistTaps="handled">
                         <View mt="5">
                             <Text style={Global.title}>

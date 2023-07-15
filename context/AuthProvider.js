@@ -3,20 +3,31 @@ import Loader from "../components/Loader";
 import { View, useTheme } from "native-base";
 import NotificationModal from "../components/NotificationModal";
 import { StatusBar } from "expo-status-bar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsAuthenticated, setUserProfile } from "../redux/UserProfileSlice";
+import { getCachedUserProfile, globalSignUserOut } from "../services/CacheService";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const { colors } = useTheme();
     const [isLoading, setIsLoading] = useState(null);
+    const dispatch = useDispatch();
 
     const { isAuthenticated } = useSelector((state) => state.userProfile);
 
     const checkIfAuthenticated = async () => {
-        setTimeout(() => {
+        await getCachedUserProfile().then(async data => {
+            if (data != null) {                                
+                dispatch(setUserProfile(data));                
+                dispatch(setIsAuthenticated(true));                                                                        
+            }
+            else {
+                await globalSignUserOut();
+                dispatch(setIsAuthenticated(false));                                                                        
+            }
             setIsLoading(false);
-        }, 2000);
+        });        
     }
 
     useEffect(() => {

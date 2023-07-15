@@ -32,7 +32,7 @@ export default function DrawerDrawer() {
                     </Stack.Group>
                     :
                     <>
-                        {(isAuthenticated != true) ?
+                        {(isAuthenticated == true) ?
                             <Stack.Group screenOptions={{
                                 headerLeftShown: false,
                                 header: () => {

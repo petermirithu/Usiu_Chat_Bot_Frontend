@@ -21,14 +21,15 @@ import Message_Custom from "../../components/chat-elements/Message_Custom";
 import Bubble_Custom from "../../components/chat-elements/Bubble_Custom";
 import Scroll_Icon from "../../components/chat-elements/Scroll_Icon";
 import Suggestion_Box from "../../components/chat-elements/Suggestion_Box";
-import { setBotTyping, setUserTyping } from "../../redux/ChatSlice";
+import { setBotTyping, setSessionId, setUserTyping } from "../../redux/ChatSlice";
 import { useAssets } from "expo-asset";
+import { send_question } from "../../services/ChatService";
+import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
+import Store from "../../redux/Store";
 
 export default function ChatInterface({ navigation }) {
     const { colors } = useTheme();
-    const dispatch = useDispatch();
-    const toast = useToast();
-    
+    const dispatch = useDispatch();    
 
     const { userProfile } = useSelector((state) => state.userProfile);
     const { botTyping, userTyping } = useSelector((state) => state.chat);    
@@ -68,33 +69,29 @@ export default function ChatInterface({ navigation }) {
         return messageObject;
     }
 
-    const sendQuestionToModel = async (formData) => {        
-        // const chatState = Store.getState().chat;
+    const sendQuestionToModel = async (formData) => {                            
+        const chatState = Store.getState().chat;
+        formData.append("userId", userProfile.id);
+        formData.append("sessionId", chatState.sessionId);        
+        await send_question(formData).then(response => {            
+            dispatch(setSessionId(response.data.sessionId));
+            dispatch(setBotTyping(false));
+            if (response != null || response != undefined) {
+                setMessages((prevMessages) => appendChats(prevMessages, [mapMessage(response.data)]));
+            }
+            else {
+                setMessages((prevMessages) => appendChats(prevMessages, [mapMessage(
+                    {
+                        _id: new Date().toISOString(),
+                        text: "Apologies, but I'm currently experiencing technical difficulties and I'm unable to assist you at the moment. Please try again later.\n\nIf the issue persists, please contact our support team for further assistance. Thank you for your understanding."
+                    }
+                )]));
+            }            
 
-        // formData.append("userId", userProfile.id);
-        // formData.append("sessionId", chatState.sessionId);
-
-        // await send_question(formData).then(response => {
-        //     dispatch(setSessionId(response.data.sessionId));
-        //     dispatch(setBotTyping(false));
-        //     if (response != null || response != undefined) {
-        //         setMessages((prevMessages) => appendChats(prevMessages, [mapMessage(response.data)]));
-        //     }
-        //     else {
-        //         setMessages((prevMessages) => appendChats(prevMessages, [mapMessage(
-        //             {
-        //                 _id: new Date().toISOString(),
-        //                 text: "Apologies, but I'm currently experiencing technical difficulties and I'm unable to assist you at the moment. Please try again later.\n\nIf the issue persists, please contact our support team for further assistance. Thank you for your understanding."
-        //             }
-        //         )]));
-        //     }            
-        //     if (chatState.chatOption == "audio") {
-        //         startTextToSpeech(response.data?.text);
-        //     }
-        // }).catch(error => {
-        //     dispatch(setBotTyping(false));
-        //     dispatch(setErrorMessage("Something went wrong while sending your question."));
-        // });
+        }).catch(error => {
+            dispatch(setBotTyping(false));
+            dispatch(setErrorMessage("Something went wrong while sending your question."));
+        });        
     }
 
     const appendChats = (prevMessages, newMessages) => {
@@ -112,8 +109,7 @@ export default function ChatInterface({ navigation }) {
     const onSend = useCallback(async (newMessages = []) => {
         setMessages((prevMessages) => appendChats(prevMessages, newMessages));
         dispatch(setBotTyping(true));
-        let formData = new FormData();
-        formData.append('questionType', 'text');
+        let formData = new FormData();        
         formData.append('question', newMessages[0].text);        
         sendQuestionToModel(formData);
     }, []);
@@ -130,8 +126,7 @@ export default function ChatInterface({ navigation }) {
         }
         setMessages((prevMessages) => appendChats(prevMessages, messageObject));
         dispatch(setBotTyping(true));
-        let formData = new FormData();
-        formData.append('questionType', 'text');
+        let formData = new FormData();        
         formData.append('question', messageObject.text);        
         sendQuestionToModel(formData);
     }
@@ -155,17 +150,13 @@ export default function ChatInterface({ navigation }) {
             greeting = "Good afternoon";
         } else {
             greeting = "Good evening";
-        }
-
-        let firstName = "";
-        if (userProfile?.name?.length > 0) {
-            firstName = ", " + userProfile.name.split(" ")[0];
-        }
-        defaultMessages[1].text = `${greeting}${firstName}! Tell me whats on your mind today?`;
+        }        
+        defaultMessages[1].text = `${greeting}' '${userProfile?.first_name||""}! Tell me whats on your mind today?`;
         setMessages(defaultMessages);                
+        dispatch(setSessionId(""));
     }    
 
-    useEffect(() => {
+    useEffect(() => {        
         if (isLoading == "none") {
             setIsLoading("started");
             setDefaultMessage();

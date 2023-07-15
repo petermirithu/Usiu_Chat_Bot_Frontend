@@ -16,7 +16,7 @@ export default function DrawerContent(props) {
 
     const loadSessions = () => {
         setTimeout(() => {
-            setIsLoading("off");
+            setIsLoading("done");
         }, 1000);
     }
 
