@@ -16,13 +16,17 @@ import {
 } from "native-base";
 import { Global } from "../../styles/Global";
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { validateEmail } from "../../services/UserService";
+import { login_user, validateEmail } from "../../services/UserService";
 import Loader from "../../components/Loader";
 import { Keyboard } from "react-native";
 import { useAssets } from 'expo-asset';
+import { storeAuthToken } from "../../services/CacheService";
+import { setIsAuthenticated, setUserProfile } from "../../redux/UserProfileSlice";
+import { useDispatch } from "react-redux";
 
 export default function SignIn({ navigation }) {
     const { colors } = useTheme();    
+    const dispatch = useDispatch();
 
     const [assets] = useAssets([require('../../assets/icon.png')])
 
@@ -59,9 +63,21 @@ export default function SignIn({ navigation }) {
         }
         else {
             setSubmitting(true);
-            setTimeout(() => {
-                setSubmitting(false);                                
-            }, 2000);
+            const payload={
+                email:formData.email.value,
+                password:formData.password.value
+            }
+            await login_user(payload).then(result=>{                
+                storeAuthToken(result?.data?.auth_token);
+                delete result.data.auth_token;
+                dispatch(setUserProfile(result.data));
+                setSubmitting(false);
+                dispatch(setIsAuthenticated(true));
+
+            }).catch(error=>{                                          
+                alert(error?.response?.data);
+            });
+            setSubmitting(false);                                            
         }
         Keyboard.dismiss();
     }
@@ -94,7 +110,7 @@ export default function SignIn({ navigation }) {
 
                 <Image alignSelf={"center"} source={assets[0]} alt="App logo" width={150} height={150} />
 
-                <View padding={5} mt="5" pt={10} flex={1}>
+                <View backgroundColor={"gray[100]"} borderTopRadius={30} padding={5} mt="5" pt={10} flex={1}>
                     <ScrollView keyboardShouldPersistTaps="handled">
                         <View mt="5">
                             <Text style={Global.title}>Welcome <Text color={"yellow.500"}>Back</Text>!</Text>

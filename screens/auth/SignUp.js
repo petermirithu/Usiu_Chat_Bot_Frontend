@@ -16,7 +16,7 @@ import {
 } from "native-base";
 import { Global } from "../../styles/Global";
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { validateEmail } from "../../services/UserService";
+import { register_user, validateEmail } from "../../services/UserService";
 import Loader from "../../components/Loader";
 import { useAssets } from 'expo-asset';
 import { Keyboard } from "react-native";
@@ -48,7 +48,7 @@ export default function SignUp({ navigation }) {
         setFormData(tempForm);
     }
 
-    const submitData = () => {
+    const submitData = async () => {
         let tempForm = { ...formData };
 
         if (formData.firstName.value?.length < 3) {
@@ -78,14 +78,22 @@ export default function SignUp({ navigation }) {
         }
         else {
             setSubmitting(true);
-            setTimeout(() => {
-                navigation.navigate("Email Verification", { Destination: formData.email.value });
+            const payload={
+                firstName: formData.firstName.value,
+                lastName: formData.lastName.value,
+                email: formData.email.value,
+                password: formData.password.value
+            }
+            await register_user(payload).then(response=>{                
+                setSubmitting(false);                                                
+                navigation.navigate("Email Verification", { Destination: formData.email.value, userId:response.data.id });
+            }).catch(error=>{                
                 setSubmitting(false);
-            }, 2000);
+                alert("Oops! Something went wrong while creating your account.")
+            });
         }
         Keyboard.dismiss();
-    }
-
+    }    
     useEffect(() => {
     }, [formData, showPassword, submitting])
 
@@ -114,7 +122,7 @@ export default function SignUp({ navigation }) {
 
                 <Image alignSelf={"center"} source={assets[0]} alt="App logo" width={150} height={150} />
 
-                <View padding={5} mt="0" pt={0} flex={1}>
+                <View backgroundColor={"gray[100]"} borderTopRadius={30} padding={5} mt="0" pt={0} flex={1}>
                     <ScrollView keyboardShouldPersistTaps="handled">
                         <View mt="5">
                             <Text style={Global.title}>Create <Text color={"yellow.500"}>Account</Text></Text>
