@@ -21,11 +21,14 @@ import Message_Custom from "../../components/chat-elements/Message_Custom";
 import Bubble_Custom from "../../components/chat-elements/Bubble_Custom";
 import Scroll_Icon from "../../components/chat-elements/Scroll_Icon";
 import Suggestion_Box from "../../components/chat-elements/Suggestion_Box";
-import { setBotTyping, setSessionId, setUserTyping } from "../../redux/ChatSlice";
+import { setBotTyping, setFetchChats, setSessionId, setUserTyping } from "../../redux/ChatSlice";
 import { useAssets } from "expo-asset";
-import { send_question } from "../../services/ChatService";
+import { fetch_conversation_history, send_question } from "../../services/ChatService";
 import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
 import Store from "../../redux/Store";
+import { getCachedSessionId } from "../../services/CacheService";
+import watch from "redux-watch";
+import { Observable } from "rxjs";
 
 export default function ChatInterface({ navigation }) {
     const { colors } = useTheme();
@@ -43,7 +46,8 @@ export default function ChatInterface({ navigation }) {
 
     const [isLoading, setIsLoading] = useState("none");
     const [messages, setMessages] = useState([]);
-            
+    const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
+    const [showLoadEarlier, setShowLoadEarlier] = useState(false);
 
     const botConfig = {
         _id: "usiuChatBot",
@@ -62,6 +66,8 @@ export default function ChatInterface({ navigation }) {
             user: botConfig,
         },
     ]
+
+    var chatPagination = { fromIndex: 0, toIndex: 10 };
 
     const mapMessage = (messageObject) => {
         messageObject["createdAt"] = new Date();
@@ -156,13 +162,93 @@ export default function ChatInterface({ navigation }) {
         dispatch(setSessionId(""));
     }    
 
+    const fetch_chat_history = async (localSessionId, loadingPrevMessages = false) => {
+        await fetch_conversation_history(localSessionId, chatPagination.fromIndex, chatPagination.toIndex).then(response => {
+            chatPagination = response.data.chatPagination;
+            if (response.data.messages?.length > 0) {
+                if (loadingPrevMessages == true) {
+                    setIsLoadingEarlier(false);
+                    setMessages((prevMessages) => appendChats(response.data.messages, prevMessages));
+                }
+                else {
+                    setMessages(response.data.messages);
+                    setIsLoading("stopped");
+                    dispatch(setFetchChats(false));
+                }
+            }
+            else {
+                setDefaultMessage();
+                setIsLoading("stopped");
+            }
+            setShowLoadEarlier(response.data.showLoadEarlier);
+        }).catch(error => {
+            setIsLoading("stopped");
+            dispatch(setErrorMessage("Something went wrong while fetching your messages."));
+        });
+    }
+
+    const onLoadEarlier = useCallback(async () => {
+        setIsLoadingEarlier(true);
+        const localSessionId = Store.getState().chat.sessionId;
+        await fetch_chat_history(localSessionId, true);
+    }, []);
+
+    const loadMessages = async (option) => {
+        chatPagination = { fromIndex: 0, toIndex: 10 };
+        if (option == "firstTime") {            
+            await getCachedSessionId().then(async cachedId => {
+                if (cachedId?.length > 0) {
+                    dispatch(setSessionId(cachedId));
+                    await fetch_chat_history(cachedId);
+                }
+                else {
+                    setDefaultMessage();
+                    setIsLoading("stopped");
+                }
+            });
+        }
+        else {
+            const localSessionId = Store.getState().chat.sessionId;
+            if (localSessionId?.length > 0) {
+                await fetch_chat_history(localSessionId);
+            }
+            else {
+                setDefaultMessage();
+                dispatch(setFetchChats(false));
+                setIsLoading("stopped");
+            }
+        }
+    }
+
     useEffect(() => {        
         if (isLoading == "none") {
             setIsLoading("started");
-            setDefaultMessage();
-            setIsLoading("stopped")                 
-        }                
-    }, [isLoading, messages]);
+            loadMessages("firstTime");            
+        }         
+        
+        // if (currentRoute != "Chat Interface") {
+        //     dispatch(setCurrentRoute("Chat Interface"))
+        // }
+        
+        const fetchChatsWatch = watch(Store.getState, 'chat.fetchChats');
+
+        const storeObservable$ = Observable.create(observer => {
+            Store.subscribe(fetchChatsWatch((newData) => {
+                observer.next(newData);
+            }));
+        });
+
+        const observableStore$ = storeObservable$.subscribe(async newData => {
+            if (newData == true && isLoading == "stopped") {
+                setIsLoading("started");
+                loadMessages("thread");
+            }
+        });
+
+        return () => {
+            observableStore$.unsubscribe();
+        }
+    }, [isLoading, messages, isLoadingEarlier, showLoadEarlier]);
 
     if (!assets || isLoading!="stopped") {
         return (
@@ -192,6 +278,9 @@ export default function ChatInterface({ navigation }) {
                             minComposerHeight={35}
                             showUserAvatar={false}
                             alignTop={true}                                                        
+                            loadEarlier={showLoadEarlier}
+                            onLoadEarlier={onLoadEarlier}
+                            isLoadingEarlier={isLoadingEarlier}
                             placeholder={(botTyping == true) ? "Bot responding ...":"Type a message ..."}
                             onSend={(messages) => onSend(messages)}                            
                             onInputTextChanged={(text) => userTypingMessage(text)}

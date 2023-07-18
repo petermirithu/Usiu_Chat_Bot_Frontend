@@ -11,6 +11,7 @@ export const ChatSlice = createSlice({
         botTyping: false,
         userTyping: false,                                         
         sessionId:"",
+        fetchChats:false,        
     },
     reducers:{        
         setBotTyping:(state, action)=>{                   
@@ -22,12 +23,15 @@ export const ChatSlice = createSlice({
         setSessionId:(state, action)=>{                   
             state.sessionId=action.payload;  
             setCachedSessionId(action.payload);           
-        },                                             
+        },      
+        setFetchChats:(state, action)=>{              
+            state.fetchChats=action.payload;              
+        }                                           
     }
 });
 
 export const {
-    setBotTyping, setUserTyping, setSessionId
+    setBotTyping, setUserTyping, setSessionId, setFetchChats
 } = ChatSlice.actions;
 
 export default ChatSlice.reducer;
