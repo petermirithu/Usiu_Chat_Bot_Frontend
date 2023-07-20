@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -16,6 +16,7 @@ import { TouchableOpacity, Linking } from "react-native";
 import { reloadAsync } from "expo-updates";
 import { globalSignUserOut } from "../../services/CacheService";
 import { setIsAuthenticated } from "../../redux/UserProfileSlice";
+import ProfileUpdate from "../../components/ProfileUpdate";
 
 export default function Profile({ navigation }) {
     const { colors } = useTheme();
@@ -23,6 +24,8 @@ export default function Profile({ navigation }) {
 
     const { userProfile } = useSelector((state) => state.userProfile);        
 
+    const [showUpdateProfileForm, setShowUpdateProfileForm] = useState(false);
+    
     const openEmailApp = () => {
         Linking.openURL('mailto:pyramyra33@gmail.com');
     }
@@ -34,7 +37,7 @@ export default function Profile({ navigation }) {
     }
 
     useEffect(() => {
-    }, [])
+    }, [showUpdateProfileForm])
 
 
     return (
@@ -60,7 +63,9 @@ export default function Profile({ navigation }) {
                 >
                     <HStack justifyContent={"space-between"}>
                         <Text fontWeight={"bold"} fontSize={15} marginBottom={5}>Profile Information</Text>
-                        <Text fontWeight={"bold"} fontSize={15} marginBottom={5} color={"yellow.500"}>Edit</Text>
+                        <TouchableOpacity onPress={()=>setShowUpdateProfileForm(true)}>
+                            <Text fontWeight={"bold"} fontSize={15} marginBottom={5} color={"yellow.500"}>Edit</Text>
+                        </TouchableOpacity>
                     </HStack>
 
                     <VStack space={8}>
@@ -119,7 +124,8 @@ export default function Profile({ navigation }) {
                     </VStack>
                 </View>
                 <Button mt={5} borderWidth={1} borderColor={"danger.600"} colorScheme={"danger"} variant={"outline"} onPress={() => signOut()}>Sign Out</Button>
-            </View>            
+            </View>  
+            <ProfileUpdate showUpdateProfileForm={showUpdateProfileForm} closeBottomSheetForm={() => setShowUpdateProfileForm(false)}></ProfileUpdate>          
         </Box>
     )
 }

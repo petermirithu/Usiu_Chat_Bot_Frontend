@@ -28,6 +28,7 @@ import Store from "../../redux/Store";
 import { getCachedSessionId } from "../../services/CacheService";
 import watch from "redux-watch";
 import { Observable } from "rxjs";
+import { setCurrentRoute } from "../../redux/NavigationSlice";
 
 export default function ChatInterface({ navigation }) {
     const { colors } = useTheme();
@@ -35,6 +36,7 @@ export default function ChatInterface({ navigation }) {
 
     const { userProfile } = useSelector((state) => state.userProfile);
     const { botTyping, userTyping } = useSelector((state) => state.chat);        
+    const { currentRoute } = useSelector((state) => state.screenNavigation);    
 
     const [assets] = useAssets([
         require('../../assets/Chat/suggestions.png'), 
@@ -156,7 +158,7 @@ export default function ChatInterface({ navigation }) {
         } else {
             greeting = "Good evening";
         }        
-        defaultMessages[1].text = `${greeting}' '${userProfile?.first_name||""}! Tell me whats on your mind today?`;
+        defaultMessages[1].text = `${greeting} ${userProfile?.first_name||""}! Tell me whats on your mind today?`;
         setMessages(defaultMessages);                
         dispatch(setSessionId(""));
     }    
@@ -226,6 +228,10 @@ export default function ChatInterface({ navigation }) {
             loadMessages("firstTime");            
         }                     
         
+        if (currentRoute != "Chat Interface") {
+            dispatch(setCurrentRoute("Chat Interface"))
+        }
+
         const fetchChatsWatch = watch(Store.getState, 'chat.fetchChats');
 
         const storeObservable$ = Observable.create(observer => {

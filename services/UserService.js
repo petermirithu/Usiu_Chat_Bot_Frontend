@@ -20,6 +20,10 @@ export const login_user = (payload) => {
     return Axios.post(BackendServerUrl + "/api/login_user", payload);
 }
 
+export const update_user = (payload) => {
+    return Axios.put(BackendServerUrl + "/api/update_user", payload);
+}
+
 export const resend_verification_code = (payload) => {
     return Axios.post(BackendServerUrl + "/api/resend_verification_code", payload);
 }

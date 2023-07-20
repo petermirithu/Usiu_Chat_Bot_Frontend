@@ -20,12 +20,20 @@ export default function Navbar(navigation) {
     const dispatch = useDispatch();
 
     const { userProfile } = useSelector((state) => state.userProfile);
-    // const { currentRoute } = useSelector((state) => state.screenNavigation);
-    const currentRoute = "Chat Interface";
-
-    const openProfile = async () => {
-        dispatch(setCurrentRoute("Profile"));
-        navigation.navigate("Profile");
+    const { currentRoute } = useSelector((state) => state.screenNavigation);    
+    
+    const navigateScreen = (routeName = "") => {
+        if (routeName?.length == 0 && currentRoute == "Chat Interface") {
+            navigation.openDrawer()
+        }
+        else if (routeName?.length > 0) {
+            dispatch(setCurrentRoute(routeName));
+            navigation.navigate(routeName);
+        }
+        else {
+            dispatch(setCurrentRoute("Chat Interface"));
+            navigation.navigate("Chat Interface");
+        }
     }
 
     useEffect(() => {
@@ -42,7 +50,7 @@ export default function Navbar(navigation) {
                 <HStack pt={(Platform.OS == "ios") ? insets.top : 0} py="2" justifyContent="space-between" alignItems="center" w="100%">
                     <HStack alignItems="center">
                         <IconButton
-                            onPress={() => navigation.openDrawer()}
+                            onPress={() => navigateScreen()}
                             _icon={{
                                 as: MaterialIcons,
                                 name: (currentRoute == "Chat Interface") ? "menu" : "arrow-back",
@@ -56,7 +64,7 @@ export default function Navbar(navigation) {
                     </HStack>                    
                     <HStack justifyContent={"center"} alignItems={"center"} marginRight={2} space={5}>
                         <View>
-                            <TouchableOpacity onPress={() => openProfile()}>
+                            <TouchableOpacity onPress={() => navigateScreen("Profile")}>
                                 <Avatar bg="white" _text={{ color: "primary.600" }} size={"sm"} source={{
                                     uri: userProfile?.picture
                                 }}>
