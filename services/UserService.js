@@ -28,10 +28,18 @@ export const change_user_password = (payload) => {
     return Axios.put(BackendServerUrl + "/api/change_user_password", payload);
 }
 
+export const user_forgot_password = (payload) => {
+    return Axios.put(BackendServerUrl + "/api/user_forgot_password", payload);
+}
+
+export const user_reset_password = (payload) => {
+    return Axios.put(BackendServerUrl + "/api/user_reset_password", payload);
+}
+
 export const resend_verification_code = (payload) => {
     return Axios.post(BackendServerUrl + "/api/resend_verification_code", payload);
 }
 
-export const verify_verification_code = (payload) => {
-    return Axios.post(BackendServerUrl + "/api/verify_verification_code", payload);
+export const verify_user_email = (payload) => {
+    return Axios.put(BackendServerUrl + "/api/verify_user_email", payload);
 }

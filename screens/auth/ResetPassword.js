@@ -21,8 +21,10 @@ import { useDispatch } from "react-redux";
 import { setNotificationModal } from "../../redux/NotificationSlice";
 import { Keyboard } from "react-native";
 import { useAssets } from "expo-asset";
+import { user_reset_password } from "../../services/UserService";
+import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
 
-export default function ResetPassword({ navigation }) {
+export default function ResetPassword({ route, navigation }) {
     const { colors } = useTheme();
     const dispatch = useDispatch();
 
@@ -47,7 +49,7 @@ export default function ResetPassword({ navigation }) {
         setFormData(tempForm);
     }
 
-    const submitData = () => {
+    const submitData = async () => {
         let tempForm = { ...formData };
         if (formData.verificationCode.value?.length != 6) {
             tempForm.verificationCode.invalid = true;
@@ -66,7 +68,12 @@ export default function ResetPassword({ navigation }) {
         }
         else {
             setSubmitting(true);
-            setTimeout(() => {
+            const payload={
+                email: route.params.email,
+                verificationCode: formData.verificationCode.value,
+                password: formData.password.value,
+            }
+            await user_reset_password(payload).then(response=>{
                 setSubmitting(false);
                 dispatch(setNotificationModal({
                     show: true,
@@ -75,10 +82,25 @@ export default function ResetPassword({ navigation }) {
                     status: "passwordChanged",
                 }));
                 navigation.navigate("Sign In");
-            }, 2000);
+            }).catch(error=>{
+                setSubmitting(false);                
+                if (error?.response?.data == "codeExpired") {
+                    tempForm.verificationCode.invalid = true;
+                    tempForm.verificationCode.error = "Verification code expired!";
+                    setFormData(tempForm);
+                }
+                else if (error?.response?.data == "invalidVerificationCode") {
+                    tempForm.verificationCode.invalid = true;
+                    tempForm.verificationCode.error = "Wrong verification code!";
+                    setFormData(tempForm);
+                }                
+                else{
+                    dispatch(setErrorMessage("Something went wrong while reseting your password."));                
+                }
+            });            
         }
         Keyboard.dismiss();
-    }
+    }    
 
     useEffect(() => {
     }, [formData, showPassword, submitting])

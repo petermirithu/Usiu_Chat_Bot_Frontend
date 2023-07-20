@@ -182,8 +182,7 @@ export default function ChatInterface({ navigation }) {
                 setIsLoading("stopped");
             }
             setShowLoadEarlier(response.data.showLoadEarlier);
-        }).catch(error => {
-            console.log(error);
+        }).catch(error => {            
             setIsLoading("stopped");
             dispatch(setErrorMessage("Something went wrong while fetching your messages."));
         });

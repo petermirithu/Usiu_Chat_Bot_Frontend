@@ -22,7 +22,7 @@ import { useDispatch } from "react-redux";
 import { Keyboard } from "react-native";
 import { setNotificationModal } from "../../redux/NotificationSlice";
 import { useAssets } from "expo-asset";
-import { resend_verification_code, verify_verification_code } from "../../services/UserService";
+import { resend_verification_code, verify_user_email } from "../../services/UserService";
 import { setIsAuthenticated, setUserProfile } from "../../redux/UserProfileSlice";
 import { storeAuthToken } from "../../services/CacheService";
 import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
@@ -60,7 +60,7 @@ export default function EmailVerification({ route, navigation }) {
         }
         else {
             setSubmitting(true);
-            await verify_verification_code({userId:route?.params?.userId, code:formData.verificationCode.value}).then(result=>{                                              
+            await verify_user_email({userId:route?.params?.userId, code:formData.verificationCode.value}).then(result=>{                                              
                 storeAuthToken(result?.data?.auth_token);
                 delete result.data.auth_token;
                 dispatch(setUserProfile(result.data));
@@ -68,7 +68,19 @@ export default function EmailVerification({ route, navigation }) {
                 dispatch(setIsAuthenticated(true));
             }).catch(error=>{                
                 setSubmitting(false);                
-                dispatch(setErrorMessage("Something went wrong while verifying your email."));
+                if (error?.response?.data == "codeExpired") {
+                    tempForm.verificationCode.invalid = true;
+                    tempForm.verificationCode.error = "Verification code expired!";
+                    setFormData(tempForm);                    
+                }
+                else if (error?.response?.data == "invalidVerificationCode") {
+                    tempForm.verificationCode.invalid = true;
+                    tempForm.verificationCode.error = "Wrong verification code!";
+                    setFormData(tempForm);
+                }      
+                else{
+                    dispatch(setErrorMessage("Something went wrong while verifying your email."));
+                }
             });            
         }
         Keyboard.dismiss();

@@ -16,13 +16,16 @@ import {
 } from "native-base";
 import { Global } from "../../styles/Global";
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { validateEmail } from "../../services/UserService";
+import { user_forgot_password, validateEmail } from "../../services/UserService";
 import Loader from "../../components/Loader";
 import { Keyboard } from "react-native";
 import { useAssets } from 'expo-asset';
+import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
+import { useDispatch } from "react-redux";
 
 export default function ForgotPassword({ navigation }) {
     const { colors } = useTheme();    
+    const dispatch = useDispatch();
 
     const [assets] = useAssets([require('../../assets/icon.png')])    
 
@@ -43,7 +46,7 @@ export default function ForgotPassword({ navigation }) {
         setFormData(tempForm);
     }
 
-    const submitData = () => {
+    const submitData = async () => {
         let tempForm = { ...formData };
 
         if (validateEmail(formData.email.value) == false) {
@@ -52,10 +55,14 @@ export default function ForgotPassword({ navigation }) {
         }
         else {
             setSubmitting(true);
-            setTimeout(() => {
-                setSubmitting(false);                
-                navigation.navigate("Reset Password");
-            }, 2000);
+
+            await user_forgot_password({email:formData.email.value}).then(resonse=>{
+                setSubmitting(false);               
+                navigation.navigate("Reset Password", { email: formData.email.value });                 
+            }).catch(error=>{
+                setSubmitting(false);                                                
+                dispatch(setErrorMessage("Something went wrong while sending you the verification code."));                
+            });            
         }
         Keyboard.dismiss();
     }

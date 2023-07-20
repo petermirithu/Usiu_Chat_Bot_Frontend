@@ -91,8 +91,15 @@ export default function SignUp({ navigation }) {
                 setSubmitting(false);                                                
                 navigation.navigate("Email Verification", { Destination: formData.email.value, userId:response.data.id });
             }).catch(error=>{                
-                setSubmitting(false);                
-                dispatch(setErrorMessage("Something went wrong while creating your account."));
+                setSubmitting(false);                               
+                if (error?.response?.data == "emailTaken") {
+                    tempForm.email.invalid = true;
+                    tempForm.email.error = "Email is already taken! Use a different one.";
+                    setFormData(tempForm);
+                }
+                else{
+                    dispatch(setErrorMessage("Something went wrong while creating your account."));
+                }
             });
         }
         Keyboard.dismiss();
