@@ -5,27 +5,27 @@ import {
     Box,
     IconButton,
     Avatar,
-    View,    
+    View,
 } from "native-base";
 import React, { useEffect } from "react";
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { useDispatch, useSelector } from "react-redux";
 import { Platform, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Badge } from 'native-base';
-import { globalSignUserOut } from "../services/CacheService";
-import { setIsAuthenticated } from "../redux/UserProfileSlice";
+import { setCurrentRoute } from "../redux/NavigationSlice";
 
 export default function Navbar(navigation) {
-    const { colors } = useTheme();    
-    const insets = useSafeAreaInsets();    
+    const { colors } = useTheme();
+    const insets = useSafeAreaInsets();
     const dispatch = useDispatch();
 
-    const { userProfile } = useSelector((state) => state.userProfile);    
+    const { userProfile } = useSelector((state) => state.userProfile);
+    // const { currentRoute } = useSelector((state) => state.screenNavigation);
+    const currentRoute = "Chat Interface";
 
     const openProfile = async () => {
-        await globalSignUserOut();
-        dispatch(setIsAuthenticated(false));                                                                        
+        dispatch(setCurrentRoute("Profile"));
+        navigation.navigate("Profile");
     }
 
     useEffect(() => {
@@ -41,22 +41,22 @@ export default function Navbar(navigation) {
             <Box bg="primary.600">
                 <HStack pt={(Platform.OS == "ios") ? insets.top : 0} py="2" justifyContent="space-between" alignItems="center" w="100%">
                     <HStack alignItems="center">
-                        <IconButton  
-                            onPress={()=> navigation.openDrawer()}                          
+                        <IconButton
+                            onPress={() => navigation.openDrawer()}
                             _icon={{
                                 as: MaterialIcons,
-                                name: "menu",
+                                name: (currentRoute == "Chat Interface") ? "menu" : "arrow-back",
                                 size: "lg",
                                 color: "white"
 
                             }} />
                         <Text color="white" fontSize="20" fontWeight="bold">
-                            Chat
+                            {(currentRoute == "Chat Interface") ? "Chat" : currentRoute}
                         </Text>
-                    </HStack>
-                    <HStack justifyContent={"center"} alignItems={"center"} marginRight={2} space={5}>                                                
+                    </HStack>                    
+                    <HStack justifyContent={"center"} alignItems={"center"} marginRight={2} space={5}>
                         <View>
-                            <TouchableOpacity onPress={()=> openProfile()}>
+                            <TouchableOpacity onPress={() => openProfile()}>
                                 <Avatar bg="white" _text={{ color: "primary.600" }} size={"sm"} source={{
                                     uri: userProfile?.picture
                                 }}>
@@ -65,7 +65,7 @@ export default function Navbar(navigation) {
                             </TouchableOpacity>
                         </View>
                     </HStack>
-                </HStack>                                
+                </HStack>
             </Box>
         </>
     )

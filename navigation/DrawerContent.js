@@ -29,13 +29,10 @@ export default function DrawerContent(props) {
         otherDays: []
     });
 
-    const navigateScreen = (routeName) => {
-        if (routeName == "Chat Interface") {
-            dispatch(setSessionId(""));
-            dispatch(setFetchChats(true));
-        }
-        // dispatch(setCurrentRoute(routeName));
-        props.navigation.navigate(routeName);
+    const openNewChat = () => {        
+        dispatch(setSessionId(""));
+        dispatch(setFetchChats(true));                
+        props.navigation.navigate("Chat Interface");
     }
 
     const loadSessions = async () => {
@@ -64,6 +61,7 @@ export default function DrawerContent(props) {
             setIsLoading("done");
         }).catch(error => {
             setIsLoading("done");
+            dispatch(setErrorMessage("Something went wrong while fetching your chat history"));
         });
     }
 
@@ -232,7 +230,7 @@ export default function DrawerContent(props) {
 
                                 <Button
                                     mt={5}
-                                    onPress={() => navigateScreen("Chat Interface")}
+                                    onPress={() => openNewChat()}
                                     variant={"subtle"}
                                     _text={{ color: colors.primary[600] }}
                                     leftIcon={

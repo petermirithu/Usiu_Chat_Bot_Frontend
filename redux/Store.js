@@ -3,6 +3,7 @@ import UserProfileSlice from "./UserProfileSlice";
 import ErrorHandlerSlice from "./ErrorHandlerSlice";
 import NotificationSlice from "./NotificationSlice";
 import ChatSlice from "./ChatSlice";
+import { ScreenNavigationSlice } from "./NavigationSlice";
 
 export default configureStore({
     reducer:{                
@@ -10,5 +11,6 @@ export default configureStore({
         errorHandler:ErrorHandlerSlice,
         notifications:NotificationSlice,
         chat:ChatSlice,
+        screenNavigation:ScreenNavigationSlice,
     }
 })

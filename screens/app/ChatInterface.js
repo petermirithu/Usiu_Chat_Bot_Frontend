@@ -3,8 +3,7 @@ import {
     View,
     useTheme,
     Box,
-    KeyboardAvoidingView,
-    useToast,
+    KeyboardAvoidingView,    
 } from "native-base";
 import { Global } from "../../styles/Global";
 import Loader from "../../components/Loader";
@@ -35,7 +34,7 @@ export default function ChatInterface({ navigation }) {
     const dispatch = useDispatch();    
 
     const { userProfile } = useSelector((state) => state.userProfile);
-    const { botTyping, userTyping } = useSelector((state) => state.chat);    
+    const { botTyping, userTyping } = useSelector((state) => state.chat);        
 
     const [assets] = useAssets([
         require('../../assets/Chat/suggestions.png'), 
@@ -182,6 +181,7 @@ export default function ChatInterface({ navigation }) {
             }
             setShowLoadEarlier(response.data.showLoadEarlier);
         }).catch(error => {
+            console.log(error);
             setIsLoading("stopped");
             dispatch(setErrorMessage("Something went wrong while fetching your messages."));
         });
@@ -224,11 +224,7 @@ export default function ChatInterface({ navigation }) {
         if (isLoading == "none") {
             setIsLoading("started");
             loadMessages("firstTime");            
-        }         
-        
-        // if (currentRoute != "Chat Interface") {
-        //     dispatch(setCurrentRoute("Chat Interface"))
-        // }
+        }                     
         
         const fetchChatsWatch = watch(Store.getState, 'chat.fetchChats');
 

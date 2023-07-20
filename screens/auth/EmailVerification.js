@@ -25,6 +25,7 @@ import { useAssets } from "expo-asset";
 import { resend_verification_code, verify_verification_code } from "../../services/UserService";
 import { setIsAuthenticated, setUserProfile } from "../../redux/UserProfileSlice";
 import { storeAuthToken } from "../../services/CacheService";
+import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
 
 export default function EmailVerification({ route, navigation }) {
     const { colors } = useTheme();
@@ -66,8 +67,8 @@ export default function EmailVerification({ route, navigation }) {
                 setSubmitting(false);
                 dispatch(setIsAuthenticated(true));
             }).catch(error=>{                
-                setSubmitting(false);
-                alert(error?.response?.data);
+                setSubmitting(false);                
+                dispatch(setErrorMessage("Something went wrong while verifying your email."));
             });            
         }
         Keyboard.dismiss();
@@ -85,7 +86,7 @@ export default function EmailVerification({ route, navigation }) {
             })); 
         }).catch(error=>{
             setSubmitting(false);
-            alert(error?.response?.data);          
+            dispatch(setErrorMessage("Something went wrong while resending your verification code."));        
         });        
     }    
 

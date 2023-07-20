@@ -20,9 +20,12 @@ import { register_user, validateEmail } from "../../services/UserService";
 import Loader from "../../components/Loader";
 import { useAssets } from 'expo-asset';
 import { Keyboard } from "react-native";
+import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
+import { useDispatch } from "react-redux";
 
 export default function SignUp({ navigation }) {
     const { colors } = useTheme();
+    const dispatch = useDispatch();
 
     const [assets] = useAssets([require('../../assets/icon.png')])
 
@@ -88,8 +91,8 @@ export default function SignUp({ navigation }) {
                 setSubmitting(false);                                                
                 navigation.navigate("Email Verification", { Destination: formData.email.value, userId:response.data.id });
             }).catch(error=>{                
-                setSubmitting(false);
-                alert("Oops! Something went wrong while creating your account.")
+                setSubmitting(false);                
+                dispatch(setErrorMessage("Something went wrong while creating your account."));
             });
         }
         Keyboard.dismiss();

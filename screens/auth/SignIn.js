@@ -23,6 +23,7 @@ import { useAssets } from 'expo-asset';
 import { storeAuthToken } from "../../services/CacheService";
 import { setIsAuthenticated, setUserProfile } from "../../redux/UserProfileSlice";
 import { useDispatch } from "react-redux";
+import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
 
 export default function SignIn({ navigation }) {
     const { colors } = useTheme();    
@@ -75,7 +76,7 @@ export default function SignIn({ navigation }) {
                 dispatch(setIsAuthenticated(true));
 
             }).catch(error=>{                                          
-                alert(error?.response?.data);
+                dispatch(setErrorMessage("Something went wrong while authenticating you."));
             });
             setSubmitting(false);                                            
         }

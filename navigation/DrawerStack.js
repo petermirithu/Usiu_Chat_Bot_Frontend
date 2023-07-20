@@ -13,6 +13,7 @@ import ResetPassword from '../screens/auth/ResetPassword';
 import EmailVerification from '../screens/auth/EmailVerification';
 import ChatInterface from '../screens/app/ChatInterface';
 import Navbar from '../components/Navbar';
+import Profile from '../screens/app/Profile';
 
 export default function DrawerDrawer() {
     const { isAuthenticated } = useSelector((state) => state.userProfile);
@@ -42,6 +43,7 @@ export default function DrawerDrawer() {
                                 }
                             }}>
                                 <Stack.Screen name="Chat Interface" component={ChatInterface} />
+                                <Stack.Screen name="Profile" component={Profile} />
                             </Stack.Group>
                             :
                             <Stack.Group screenOptions={{
