@@ -24,6 +24,7 @@ import { storeAuthToken } from "../../services/CacheService";
 import { setIsAuthenticated, setUserProfile } from "../../redux/UserProfileSlice";
 import { useDispatch } from "react-redux";
 import { setErrorMessage } from "../../redux/ErrorHandlerSlice";
+import { setNotificationModal } from "../../redux/NotificationSlice";
 
 export default function SignIn({ navigation }) {
     const { colors } = useTheme();    
@@ -74,11 +75,20 @@ export default function SignIn({ navigation }) {
                 dispatch(setUserProfile(result.data));
                 setSubmitting(false);
                 dispatch(setIsAuthenticated(true));
-
-            }).catch(error=>{                                          
-                dispatch(setErrorMessage("Something went wrong while authenticating you."));
-            });
-            setSubmitting(false);                                            
+            }).catch(error=>{    
+                setSubmitting(false);     
+                if (error?.response?.data == "invalidCredentials") {
+                    dispatch(setNotificationModal({
+                        show: true,
+                        title: "Invalid login credentials!",
+                        description: "Please try again with the correct credentials.",
+                        status: "invalidCredentials",
+                    }));   
+                }
+                else{
+                    dispatch(setErrorMessage("Something went wrong while authenticating you."));
+                }
+            });                                                    
         }
         Keyboard.dismiss();
     }

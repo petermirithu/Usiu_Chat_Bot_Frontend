@@ -17,6 +17,7 @@ import { reloadAsync } from "expo-updates";
 import { globalSignUserOut } from "../../services/CacheService";
 import { setIsAuthenticated } from "../../redux/UserProfileSlice";
 import ProfileUpdate from "../../components/ProfileUpdate";
+import ChangePassword from "../../components/ChangePassword";
 
 export default function Profile({ navigation }) {
     const { colors } = useTheme();
@@ -25,6 +26,7 @@ export default function Profile({ navigation }) {
     const { userProfile } = useSelector((state) => state.userProfile);        
 
     const [showUpdateProfileForm, setShowUpdateProfileForm] = useState(false);
+    const [showChangePswdForm, setShowChangePswdForm] = useState(false);
     
     const openEmailApp = () => {
         Linking.openURL('mailto:pyramyra33@gmail.com');
@@ -37,7 +39,7 @@ export default function Profile({ navigation }) {
     }
 
     useEffect(() => {
-    }, [showUpdateProfileForm])
+    }, [showUpdateProfileForm, showChangePswdForm])
 
 
     return (
@@ -91,7 +93,7 @@ export default function Profile({ navigation }) {
                                 <MaterialCommunityIcons name="onepassword" size={20} color={colors.gray[700]} />
                             </View>
                             <Text>Change Password</Text>
-                            <TouchableOpacity style={{ position: "absolute", right: 0 }}>
+                            <TouchableOpacity onPress={()=>setShowChangePswdForm(true)} style={{ position: "absolute", right: 0 }}>
                                 <View bgColor={"gray.300"} width={35} height={35} alignItems={"center"} justifyContent={"center"} borderRadius={5}>
                                     <FontAwesome5 name="chevron-right" size={20} color="black" />
                                 </View>
@@ -126,6 +128,7 @@ export default function Profile({ navigation }) {
                 <Button mt={5} borderWidth={1} borderColor={"danger.600"} colorScheme={"danger"} variant={"outline"} onPress={() => signOut()}>Sign Out</Button>
             </View>  
             <ProfileUpdate showUpdateProfileForm={showUpdateProfileForm} closeBottomSheetForm={() => setShowUpdateProfileForm(false)}></ProfileUpdate>          
+            <ChangePassword showChangePswdForm={showChangePswdForm} closeBottomSheetForm={() => setShowChangePswdForm(false)}></ChangePassword>
         </Box>
     )
 }

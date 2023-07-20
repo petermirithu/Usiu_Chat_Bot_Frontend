@@ -24,6 +24,10 @@ export const update_user = (payload) => {
     return Axios.put(BackendServerUrl + "/api/update_user", payload);
 }
 
+export const change_user_password = (payload) => {
+    return Axios.put(BackendServerUrl + "/api/change_user_password", payload);
+}
+
 export const resend_verification_code = (payload) => {
     return Axios.post(BackendServerUrl + "/api/resend_verification_code", payload);
 }

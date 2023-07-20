@@ -12,19 +12,18 @@ import {
     KeyboardAvoidingView,
     ScrollView
 } from "native-base";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setNotificationModal } from "../redux/NotificationSlice";
-import { AuthContext } from "../context/AuthProvider";
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { Keyboard, Platform } from "react-native";
 import { setErrorMessage } from "../redux/ErrorHandlerSlice";
+import { change_user_password } from "../services/UserService";
 
 export default function ChangePassword({ showChangePswdForm, closeBottomSheetForm }) {
     const { colors } = useTheme();    
+    const dispatch = useDispatch();    
 
-    const dispatch = useDispatch();
-
-    const { changeUserPassword } = useContext(AuthContext);
+    const { userProfile } = useSelector((state) => state.userProfile);
 
     const [formData, setFormData] = useState(
         {
@@ -72,6 +71,11 @@ export default function ChangePassword({ showChangePswdForm, closeBottomSheetFor
             tempForm.newPassword.error = "Please provide a valid new password!";
             setFormData(tempForm);
         }
+        else if (formData.currentPassword.value == formData.newPassword.value) {
+            tempForm.newPassword.invalid = true;
+            tempForm.newPassword.error = "New password must be different from current one!";
+            setFormData(tempForm);
+        }        
         else if (formData.newPassword.value !== formData.confirmPassword.value) {
             tempForm.confirmPassword.invalid = true;
             tempForm.confirmPassword.error = "This password does not match the new password above!";
@@ -80,10 +84,11 @@ export default function ChangePassword({ showChangePswdForm, closeBottomSheetFor
         else {
             setSubmitting(true);
             const payload = {
+                userId: userProfile.id,
                 oldPassword: formData.currentPassword.value,
                 newPassword: formData.newPassword.value
             }
-            await changeUserPassword(payload).then(response => {                
+            await change_user_password(payload).then(response => {                
                 setSubmitting(false);
                 dispatch(setNotificationModal({
                     show: true,
@@ -93,11 +98,8 @@ export default function ChangePassword({ showChangePswdForm, closeBottomSheetFor
                 }));                                                        
                 closeBottomSheetForm();
             }).catch(error => {
-                setSubmitting(false);
-                if (error.name == "LimitExceededException") {                                        
-                    dispatch(setErrorMessage("Attempt limit for changing password exceeded."));                                        
-                }
-                else if (error.name == "NotAuthorizedException") {
+                setSubmitting(false);                                                
+                if (error?.response?.data == "invalidPassword") {
                     tempForm.currentPassword.invalid = true;
                     tempForm.currentPassword.error = "Please provide a valid password!";
                     setFormData(tempForm);
