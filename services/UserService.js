@@ -43,3 +43,7 @@ export const resend_verification_code = (payload) => {
 export const verify_user_email = (payload) => {
     return Axios.put(BackendServerUrl + "/api/verify_user_email", payload);
 }
+
+export const sendFeedback = (payload) => {    
+    return Axios.post(BackendServerUrl + "/api/send_feedback", payload);    
+}

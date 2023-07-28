@@ -76,6 +76,8 @@ export default function SignIn({ navigation }) {
                 setSubmitting(false);
                 dispatch(setIsAuthenticated(true));
             }).catch(error=>{    
+                console.log(error)
+                
                 setSubmitting(false);     
                 if (error?.response?.data == "invalidCredentials") {
                     dispatch(setNotificationModal({

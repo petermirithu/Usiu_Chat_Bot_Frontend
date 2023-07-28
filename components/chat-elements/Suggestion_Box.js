@@ -28,7 +28,7 @@ export default function Suggestion_Box({ imageUri, sendPrompt }) {
             <Image source={imageUri} alt="Suggestion logo" width={35} height={35}/>
             <Text fontFamily={"Poppins-Bold"} fontSize={25} color="primary.600" marginBottom={3}>Suggestions</Text>
             <Button onPress={() => sendPrompt("Tell me about USIU?")} variant={"subtle"} colorScheme={"gray"} size={"sm"} marginBottom={3}>Tell me about USIU?</Button>
-            <Button onPress={() => sendPrompt("Who is Dr Patrick Wamuyu?")} variant={"subtle"} colorScheme={"gray"} size={"sm"} marginBottom={3}>Who is Dr Patrick Wamuyu?</Button>
+            <Button onPress={() => sendPrompt("Who is Dr.Collins from USIU?")} variant={"subtle"} colorScheme={"gray"} size={"sm"} marginBottom={3}>Who is Dr.Collins from USIU?</Button>
             <Button onPress={() => sendPrompt("How can I check for my fee balance?")} variant={"subtle"} colorScheme={"gray"} size={"sm"} marginBottom={3}>How can I check for my fee balance?</Button>
             <Button onPress={() => sendPrompt("How can I register for a course on CX?")} variant={"subtle"} colorScheme={"gray"} size={"sm"} marginBottom={3}>How can I register for a course on CX?</Button>
             <Button onPress={() => sendPrompt("How can I check my grades on blackboard?")} variant={"subtle"} colorScheme={"gray"} size={"sm"} marginBottom={3}>How can I check my grades on blackboard?</Button>

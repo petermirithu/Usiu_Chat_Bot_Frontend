@@ -19,7 +19,8 @@ export default function NotificationModal() {
         require('../assets/Images/shield.png'),
         require('../assets/Images/message.png'),
         require('../assets/Images/successful.png'),
-        require('../assets/Images/invalidLogin.png')        
+        require('../assets/Images/invalidLogin.png'),
+        require('../assets/Images/thumbs-up.png')
     ])
 
     const { notificationModal } = useSelector((state) => state.notifications);
@@ -54,14 +55,21 @@ export default function NotificationModal() {
                             <Image alignSelf={"center"} source={assets[3]} alt="Warning icon" width={75} height={75} />
                             :
                             <>
-                                {(notificationModal.status == "passwordChanged") ?
-                                    <Image alignSelf={"center"} source={assets[0]} alt="Success icon" width={75} height={75} />
+                                {(notificationModal.status == "feedbackReceived") ?
+                                    <Image
+                                        source={assets[4]} alt="success icon" width={75} height={75} />
                                     :
                                     <>
-                                        {(notificationModal.status == "emailSent") ?
-                                            <Image alignSelf={"center"} source={assets[1]} alt="Success icon" width={75} height={75} />
+                                        {(notificationModal.status == "passwordChanged") ?
+                                            <Image alignSelf={"center"} source={assets[0]} alt="Success icon" width={75} height={75} />
                                             :
-                                            <Image alignSelf={"center"} source={assets[2]} alt="Success icon" width={75} height={75} />
+                                            <>
+                                                {(notificationModal.status == "emailSent") ?
+                                                    <Image alignSelf={"center"} source={assets[1]} alt="Success icon" width={75} height={75} />
+                                                    :
+                                                    <Image alignSelf={"center"} source={assets[2]} alt="Success icon" width={75} height={75} />
+                                                }
+                                            </>
                                         }
                                     </>
                                 }

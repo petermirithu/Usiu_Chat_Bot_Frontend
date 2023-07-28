@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, useTheme, HStack, IconButton, Button, Spinner, Box, Modal } from 'native-base';
-import { DrawerContentScrollView } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { MaterialIcons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getDrawerStatusFromState } from '@react-navigation/drawer';
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFetchChats, setSessionId } from '../redux/ChatSlice';
 import { setErrorMessage } from '../redux/ErrorHandlerSlice';
 import { Platform, TouchableOpacity } from 'react-native';
+import { setCurrentRoute } from "../redux/NavigationSlice";
 
 export default function DrawerContent(props) {
     const { colors } = useTheme();
@@ -29,10 +30,16 @@ export default function DrawerContent(props) {
         otherDays: []
     });
 
-    const openNewChat = () => {        
+    const openNewChat = () => {
         dispatch(setSessionId(""));
-        dispatch(setFetchChats(true));                
+        dispatch(setFetchChats(true));
+        dispatch(setCurrentRoute("Chat Interface"));        
         props.navigation.navigate("Chat Interface");
+    }
+
+    const openFeedbackScreen = () => {    
+        dispatch(setCurrentRoute("Feedback"));        
+        props.navigation.navigate("Feedback");
     }
 
     const loadSessions = async () => {
@@ -247,6 +254,16 @@ export default function DrawerContent(props) {
                         }
                     </View>
                 </DrawerContentScrollView>
+                <View marginBottom={15} borderTopWidth={1} borderTopColor={colors.gray[100]}>
+                    <DrawerItem
+                        icon={({ color, size }) => (
+                            <MaterialIcons name="feedback" size={size} color={color} />
+                        )}
+                        label={"Feedback"}
+                        onPress={() => openFeedbackScreen()}
+                    >
+                    </DrawerItem>
+                </View>
                 <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
                     <Modal.Content>
                         <Modal.Header>Confirm Delete</Modal.Header>
