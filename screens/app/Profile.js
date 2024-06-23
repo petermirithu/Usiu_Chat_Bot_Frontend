@@ -50,9 +50,9 @@ export default function Profile({ navigation }) {
                 }}>
                     <FontAwesome5 name="user-alt" size={30} color={colors.primary[600]} />
                 </Avatar>
-                <TouchableOpacity>
+                {/* <TouchableOpacity>
                     <Text mt={3} color="white">Change Avatar <FontAwesome name="pencil" size={20} color="white" /></Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
             <View mt={5} backgroundColor={colors.gray[100]} flex={1} borderTopRadius={30} padding={5} height={"100%"}>
                 <View
