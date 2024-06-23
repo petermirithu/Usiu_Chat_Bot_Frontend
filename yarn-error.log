@@ -1,0 +1,81 @@
+Arguments: 
+  /usr/local/bin/node /Users/pyra/.yarn/bin/yarn.js install
+
+PATH: 
+  /Users/pyra/opt/anaconda3/bin:/Users/pyra/opt/anaconda3/condabin:/Users/pyra/.yarn/bin:/Users/pyra/.config/yarn/global/node_modules/.bin:/opt/homebrew/opt/openjdk/bin:/Library/Java/JavaVirtualMachines/openjdk-8.jdk/Contents/Home/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/pyra/Library/Android/sdk/platform-tools:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/pyra/Library/Android/sdk/emulator:/Users/pyra/Library/Android/sdk/tools:/Users/pyra/Library/Android/sdk/tools/bin:/Users/pyra/Library/Android/sdk/platform-tools
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.16.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: self signed certificate in certificate chain
+      at TLSSocket.onConnectSecure (node:_tls_wrap:1532:34)
+      at TLSSocket.emit (node:events:527:28)
+      at TLSSocket._finishInit (node:_tls_wrap:946:8)
+      at TLSWrap.ssl.onhandshakedone (node:_tls_wrap:727:12)
+
+npm manifest: 
+  {
+    "name": "usiu_chat_bot_frontend",
+    "version": "1.0.0",
+    "homepage": ".",
+    "author": "Peter Mirithu",
+    "private": true,
+    "main": "node_modules/expo/AppEntry.js",
+    "keywords": [
+      "react",
+      "expo",
+      "template",
+      "nativebase"
+    ],
+    "license": "MIT",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web",
+      "eject": "expo eject"
+    },
+    "dependencies": {
+      "@react-native-async-storage/async-storage": "~1.17.3",
+      "@react-navigation/drawer": "^6.6.3",
+      "@react-navigation/native": "^6.1.7",
+      "@react-navigation/native-stack": "^6.9.13",
+      "@reduxjs/toolkit": "^1.9.5",
+      "axios": "^1.4.0",
+      "expo": "^47.0.0",
+      "expo-asset": "~8.7.0",
+      "expo-splash-screen": "~0.17.5",
+      "expo-status-bar": "~1.4.2",
+      "expo-updates": "~0.15.6",
+      "native-base": "3.4.0",
+      "react": "18.1.0",
+      "react-dom": "18.1.0",
+      "react-native": "0.70.8",
+      "react-native-gesture-handler": "~2.8.0",
+      "react-native-gifted-chat": "^2.4.0",
+      "react-native-reanimated": "~2.12.0",
+      "react-native-safe-area-context": "4.4.1",
+      "react-native-screens": "~3.18.0",
+      "react-native-svg": "13.4.0",
+      "react-native-web": "~0.18.7",
+      "react-redux": "^8.1.1",
+      "redux-watch": "^1.2.0",
+      "rxjs": "^7.8.1"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.19.3"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
